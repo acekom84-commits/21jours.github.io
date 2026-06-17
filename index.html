@@ -186,6 +186,11 @@
   .auth-or{display:flex;align-items:center;text-align:center;color:rgba(245,243,238,0.5);font-size:12px;font-family:"Montserrat",sans-serif;text-transform:uppercase;letter-spacing:0.1em;margin:16px 0;}
   .auth-or::before,.auth-or::after{content:"";flex:1;height:1px;background:rgba(255,255,255,0.15);}
   .auth-or span{padding:0 12px;}
+  .role-options{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+  .role-opt{width:100%;background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.18);border-radius:10px;padding:13px 15px;font-family:"Montserrat",sans-serif;font-size:15px;cursor:pointer;transition:border-color .15s ease,background .15s ease;}
+  .role-opt:hover{border-color:var(--gold-soft);background:rgba(224,177,58,0.12);}
+  .role-line{font-family:"Montserrat",sans-serif;font-size:13px;color:var(--cream-dim);margin:0 0 14px;}
+  .role-change{color:var(--gold-soft);text-decoration:underline;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -216,12 +221,29 @@
   </div>
 </div>
 
+<div class="auth-overlay hidden" id="roleOverlay">
+  <div class="auth-card">
+    <span class="label">Personnalisation</span>
+    <h2>Quel est votre rôle ?</h2>
+    <p class="auth-sub">Les actions de chaque jour s'adapteront à votre quotidien professionnel.</p>
+    <div class="role-options">
+      <button class="role-opt" data-role="dirigeant">Dirigeant·e</button>
+      <button class="role-opt" data-role="manager">Manager / chef d'équipe</button>
+      <button class="role-opt" data-role="commercial">Commercial·e</button>
+      <button class="role-opt" data-role="auto">Auto-entrepreneur·se</button>
+      <button class="role-opt" data-role="autre">Autre</button>
+    </div>
+    <a class="auth-skip" id="roleSkip">Plus tard</a>
+  </div>
+</div>
+
 <header class="hero">
   <div class="wrap">
     <span class="label">Le livret d'après-conférence</span>
     <span class="accent">Pour réussir,</span>
     <h1>Dopez votre optimisme</h1>
     <p class="hero-greet" id="heroGreet" style="display:none"></p>
+    <p class="role-line" id="roleLine" style="display:none"></p>
     <p class="lede">21 jours pour transformer une conférence en habitude. Un pas après l'autre.</p>
     <p class="from">Le prolongement de la conférence de <b>Jean-Philippe Ackermann</b></p>
     <div class="dots" aria-hidden="true"></div>
@@ -304,9 +326,9 @@
       title:"Décider",
       intro:"Tout commence par une décision. Pas par les circonstances, pas par la chance. Par vous.",
       days:[
-        {n:1,t:"La décision",idea:"L'optimisme ne tombe pas du ciel, il se décide. Comme à 21 ans, on peut choisir d'être de ceux qui cherchent la lumière plutôt que de subir le temps qu'il fait.",action:"Écrivez en une phrase votre décision pour les trois semaines à venir.",quote:"« J'ai décidé d'être heureux, car c'est bon pour la santé. » Voltaire"},
+        {n:1,t:"La décision",idea:"L'optimisme ne tombe pas du ciel, il se décide. Comme à 21 ans, on peut choisir d'être de ceux qui cherchent la lumière plutôt que de subir le temps qu'il fait.",action:"Écrivez en une phrase votre décision pour les trois semaines à venir.",actions:{dirigeant:"Écrivez la décision que vous prenez comme dirigeant·e pour ces trois semaines : le ton que vous voulez donner à votre entreprise.",manager:"Écrivez en une phrase la décision que vous prenez pour votre équipe ces trois semaines.",commercial:"Écrivez votre décision pour ces trois semaines : l'état d'esprit avec lequel vous abordez vos rendez-vous, même après un refus.",auto:"Écrivez votre décision pour ces trois semaines : l'énergie que vous voulez mettre dans votre activité, seul·e aux commandes."},quote:"« J'ai décidé d'être heureux, car c'est bon pour la santé. » Voltaire"},
         {n:2,t:"Regarder ce qui pèse",idea:"L'optimisme n'est pas un déni. On regarde d'abord la difficulté en face, sans la maquiller. C'est même la condition pour avancer.",action:"Notez une difficulté réelle du moment, en une phrase factuelle, sans jugement."},
-        {n:3,t:"L'autre face",idea:"Aussi fine soit la tranche, elle a toujours deux faces. Chaque situation aussi. À vous de choisir celle que vous décidez d'examiner.",action:"Prenez une contrariété d'aujourd'hui et cherchez sa deuxième face, ce qu'elle rend possible."},
+        {n:3,t:"L'autre face",idea:"Aussi fine soit la tranche, elle a toujours deux faces. Chaque situation aussi. À vous de choisir celle que vous décidez d'examiner.",action:"Prenez une contrariété d'aujourd'hui et cherchez sa deuxième face, ce qu'elle rend possible.",actions:{dirigeant:"Prenez une tension dans votre entreprise aujourd'hui et cherchez ce qu'elle révèle d'utile pour la suite.",manager:"Prenez un couac de la journée avec votre équipe et cherchez ce qu'il rend possible d'améliorer.",commercial:"Prenez un refus ou une objection d'aujourd'hui et cherchez ce qu'il vous apprend pour le prochain rendez-vous.",auto:"Prenez une difficulté de votre activité aujourd'hui et cherchez l'opportunité qu'elle cache."}},
         {n:4,t:"Trois choses qui ont marché",idea:"Le cerveau retient le négatif par réflexe. L'optimisme actif rééquilibre la balance, volontairement.",action:"Avant de dormir, notez trois choses qui ont fonctionné aujourd'hui, même minuscules."},
         {n:5,t:"Les mots qui construisent",idea:"Nos mots façonnent notre humeur, et celle des autres. « Problème » ferme une porte, « défi » en ouvre une.",action:"Repérez une phrase négative que vous répétez souvent et reformulez-la."},
         {n:6,t:"Votre énergie déteint",idea:"L'optimisme est une forme de courage qui donne confiance aux autres. Votre énergie est contagieuse, en bien comme en moins bien.",action:"Observez aujourd'hui l'effet de votre humeur sur une personne autour de vous.",quote:"« L'optimisme est une forme de courage qui donne confiance aux autres. » Baden-Powell"},
@@ -323,7 +345,7 @@
         {n:10,t:"Transformer l'obstacle",idea:"Chaque obstacle porte une opportunité, à condition d'avoir décidé de la chercher.",action:"Prenez un obstacle actuel et trouvez une chose, une seule, qu'il rend possible."},
         {n:11,t:"Le corps porte l'esprit",idea:"L'énergie n'est pas qu'une affaire de tête. Le mouvement nourrit l'optimisme, j'en ai fait l'expérience sur bien des terrains.",action:"Bougez vingt minutes aujourd'hui. Une marche suffit."},
         {n:12,t:"Protéger son attention",idea:"On ne cultive pas l'optimisme en se gavant de mauvaises nouvelles. Ce que vous laissez entrer compte autant que ce que vous décidez.",action:"Coupez une source de bruit aujourd'hui, une notification, un fil d'actualité."},
-        {n:13,t:"Reconnaître et remercier",idea:"La reconnaissance est l'un des plus puissants moteurs humains. Et elle commence par celle que l'on donne.",action:"Remerciez une personne de façon sincère et précise, pas en passant."},
+        {n:13,t:"Reconnaître et remercier",idea:"La reconnaissance est l'un des plus puissants moteurs humains. Et elle commence par celle que l'on donne.",action:"Remerciez une personne de façon sincère et précise, pas en passant.",actions:{dirigeant:"Reconnaissez le travail d'un collaborateur, de façon précise et sincère, devant les autres si possible.",manager:"Félicitez un membre de votre équipe pour quelque chose de précis qu'il a bien fait cette semaine.",commercial:"Remerciez un client ou un partenaire de façon sincère et précise, sans rien chercher à vendre derrière.",auto:"Remerciez un client, un partenaire ou un proche qui soutient votre activité, de façon précise."}},
         {n:14,t:"Le point d'étape",idea:"C'est l'action qui crée l'énergie, pas l'inverse. On attend rarement d'avoir envie pour commencer.",action:"Notez l'action de la semaine qui vous a le plus rechargé."}
       ]
     },
@@ -346,6 +368,19 @@
   var weeksEl = document.getElementById("weeks");
   var total = 21;
 
+  /* ====== RÔLES (personnalisation des actions) ====== */
+  var ROLES = {
+    dirigeant:  "Dirigeant·e",
+    manager:    "Manager / chef d'équipe",
+    commercial: "Commercial·e",
+    auto:       "Auto-entrepreneur·se",
+    autre:      "Autre"
+  };
+  var dayMap = {};
+  weeks.forEach(function(w){ w.days.forEach(function(d){ dayMap[d.n] = d; }); });
+  var currentRole = null;
+  /* ================================================== */
+
   weeks.forEach(function(week){
     var sec = document.createElement("section");
     sec.className = "week";
@@ -365,7 +400,7 @@
       html += '</div>';
       html += '<div class="day-body"><div class="day-body-inner">';
       html += '<div class="field"><p class="ft">L\'idée</p><p>'+d.idea+'</p></div>';
-      html += '<div class="field action"><p class="ft">Votre pas d\'aujourd\'hui</p><p>'+d.action+'</p></div>';
+      html += '<div class="field action"><p class="ft">Votre pas d\'aujourd\'hui</p><p class="action-text" data-action-day="'+d.n+'">'+d.action+'</p></div>';
       if(d.quote){ html += '<p class="quote">'+d.quote+'</p>'; }
       html += '<label class="daycheck"><input type="checkbox" data-check="'+d.n+'"><span>Marquer ce jour comme vécu</span></label>';
       html += '</div></div>';
@@ -421,6 +456,9 @@
   var skipAuth    = document.getElementById("skipAuth");
   var heroGreet   = document.getElementById("heroGreet");
   var googleBtn   = document.getElementById("googleBtn");
+  var roleOverlay = document.getElementById("roleOverlay");
+  var roleLine    = document.getElementById("roleLine");
+  var roleSkip    = document.getElementById("roleSkip");
 
   authPill.onclick = showOverlay; // comportement par défaut (déconnecté)
 
@@ -462,16 +500,69 @@
     authPill.onclick = async function(){ await sb.auth.signOut(); location.reload(); };
   }
 
+  /* ====== RÔLES : application, affichage, sauvegarde ====== */
+  function showRolePicker(){ roleOverlay.classList.remove("hidden"); }
+  function hideRolePicker(){ roleOverlay.classList.add("hidden"); }
+
+  function renderRoleLine(role){
+    roleLine.innerHTML = "";
+    var a = document.createElement("a");
+    a.className = "role-change";
+    if(role && ROLES[role]){
+      roleLine.appendChild(document.createTextNode("Parcours adapté : " + ROLES[role] + " "));
+      a.textContent = "(changer)";
+    } else {
+      a.textContent = "🎯 Personnaliser les actions selon mon rôle";
+    }
+    a.onclick = showRolePicker;
+    roleLine.appendChild(a);
+    roleLine.style.display = "block";
+  }
+
+  function applyRole(role){
+    currentRole = role;
+    document.querySelectorAll("[data-action-day]").forEach(function(p){
+      var n = parseInt(p.getAttribute("data-action-day"), 10);
+      var d = dayMap[n];
+      if(!d){ return; }
+      var txt = (d.actions && role && d.actions[role]) ? d.actions[role] : d.action;
+      p.textContent = txt;
+    });
+    renderRoleLine(role);
+  }
+
+  async function saveRole(role){
+    if(!currentUser){ return; }
+    var res = await sb.from("progression").upsert(
+      { user_id: currentUser.id, role: role, updated_at: new Date().toISOString() },
+      { onConflict: "user_id" }
+    );
+    if(res.error){ console.error("Sauvegarde du rôle impossible :", res.error.message); }
+  }
+
+  document.querySelectorAll(".role-opt").forEach(function(btn){
+    btn.onclick = function(){
+      var role = btn.getAttribute("data-role");
+      applyRole(role);
+      hideRolePicker();
+      saveRole(role);
+    };
+  });
+  roleSkip.onclick = function(){ hideRolePicker(); };
+  /* ======================================================= */
+
   async function onLogin(user){
     currentUser = user;
     hideOverlay();
     var m = user.user_metadata || {};
     var prenom = m.prenom || m.given_name || (m.full_name ? m.full_name.split(" ")[0] : "") || (m.name ? m.name.split(" ")[0] : "") || localStorage.getItem('jpa_prenom') || "";
-    var res = await sb.from('progression').select('jours_faits, prenom').eq('user_id', user.id).maybeSingle();
+    var res = await sb.from('progression').select('jours_faits, prenom, role').eq('user_id', user.id).maybeSingle();
     var jours = [];
+    var role = null;
     if(res.data){
       jours = res.data.jours_faits || [];
       if(res.data.prenom){ prenom = res.data.prenom; }
+      role = res.data.role || null;
     } else {
       await sb.from('progression').upsert(
         { user_id: user.id, prenom: prenom, jours_faits: [] },
@@ -480,6 +571,8 @@
     }
     applyProgress(jours);
     setGreeting(prenom);
+    applyRole(role);
+    if(!role){ showRolePicker(); }
   }
 
   sendLinkBtn.onclick = async function(){
