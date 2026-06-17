@@ -191,6 +191,10 @@
   .role-opt:hover{border-color:var(--gold-soft);background:rgba(224,177,58,0.12);}
   .role-line{font-family:"Montserrat",sans-serif;font-size:13px;color:var(--cream-dim);margin:0 0 14px;}
   .role-change{color:var(--gold-soft);text-decoration:underline;cursor:pointer;}
+  .answer-box{width:100%;box-sizing:border-box;font-family:"Lora",serif;font-size:15px;line-height:1.55;padding:11px 13px;margin-top:2px;border:1px solid rgba(20,33,55,0.18);border-radius:10px;background:#fff;color:#23252B;resize:vertical;min-height:74px;}
+  .answer-box:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 2px rgba(224,177,58,0.18);}
+  .save-hint{display:block;height:14px;margin-top:5px;font-family:"Montserrat",sans-serif;font-size:12px;color:#3c8f5a;opacity:0;transition:opacity .2s ease;}
+  .save-hint.show{opacity:1;}
 </style>
 </head>
 <body>
@@ -379,6 +383,9 @@
   var dayMap = {};
   weeks.forEach(function(w){ w.days.forEach(function(d){ dayMap[d.n] = d; }); });
   var currentRole = null;
+  var answers = {};
+  var lastEditedDay = null;
+  var answerSaveTimer = null;
   /* ================================================== */
 
   weeks.forEach(function(week){
@@ -401,6 +408,7 @@
       html += '<div class="day-body"><div class="day-body-inner">';
       html += '<div class="field"><p class="ft">L\'idée</p><p>'+d.idea+'</p></div>';
       html += '<div class="field action"><p class="ft">Votre pas d\'aujourd\'hui</p><p class="action-text" data-action-day="'+d.n+'">'+d.action+'</p></div>';
+      html += '<div class="field reponse"><p class="ft">Votre réponse</p><textarea class="answer-box" data-answer-day="'+d.n+'" rows="3" placeholder="Écrivez ici votre réponse… (enregistrée automatiquement)"></textarea><span class="save-hint" data-hint-day="'+d.n+'"></span></div>';
       if(d.quote){ html += '<p class="quote">'+d.quote+'</p>'; }
       html += '<label class="daycheck"><input type="checkbox" data-check="'+d.n+'"><span>Marquer ce jour comme vécu</span></label>';
       html += '</div></div>';
@@ -491,6 +499,48 @@
     if(res.error){ console.error("Sauvegarde impossible :", res.error.message); }
   }
 
+  function fillAnswers(obj){
+    answers = obj || {};
+    document.querySelectorAll("[data-answer-day]").forEach(function(ta){
+      var n = ta.getAttribute("data-answer-day");
+      ta.value = (answers[n] != null) ? answers[n] : "";
+    });
+  }
+
+  function flashSaved(day){
+    var hint = document.querySelector('[data-hint-day="'+day+'"]');
+    if(!hint){ return; }
+    hint.textContent = "Enregistré ✓";
+    hint.classList.add("show");
+    setTimeout(function(){ hint.classList.remove("show"); }, 1800);
+  }
+
+  async function saveAnswers(){
+    if(!currentUser){ return; }
+    var res = await sb.from('progression').upsert(
+      { user_id: currentUser.id, reponses: answers, updated_at: new Date().toISOString() },
+      { onConflict: 'user_id' }
+    );
+    if(res.error){ console.error("Sauvegarde des réponses impossible :", res.error.message); }
+    else if(lastEditedDay != null){ flashSaved(lastEditedDay); }
+  }
+
+  function scheduleSaveAnswers(){
+    if(answerSaveTimer){ clearTimeout(answerSaveTimer); }
+    answerSaveTimer = setTimeout(saveAnswers, 1000);
+  }
+
+  document.querySelectorAll("[data-answer-day]").forEach(function(ta){
+    ta.addEventListener("input", function(){
+      var n = ta.getAttribute("data-answer-day");
+      answers[n] = ta.value;
+      lastEditedDay = n;
+      if(currentUser){ scheduleSaveAnswers(); }
+      else if(!nudged){ nudged = true; showOverlay(); }
+    });
+    ta.addEventListener("blur", function(){ if(currentUser){ saveAnswers(); } });
+  });
+
   function setGreeting(prenom){
     if(prenom){
       heroGreet.textContent = "Bonjour " + prenom + ", heureux de vous retrouver.";
@@ -556,13 +606,15 @@
     hideOverlay();
     var m = user.user_metadata || {};
     var prenom = m.prenom || m.given_name || (m.full_name ? m.full_name.split(" ")[0] : "") || (m.name ? m.name.split(" ")[0] : "") || localStorage.getItem('jpa_prenom') || "";
-    var res = await sb.from('progression').select('jours_faits, prenom, role').eq('user_id', user.id).maybeSingle();
+    var res = await sb.from('progression').select('jours_faits, prenom, role, reponses').eq('user_id', user.id).maybeSingle();
     var jours = [];
     var role = null;
+    var reponses = {};
     if(res.data){
       jours = res.data.jours_faits || [];
       if(res.data.prenom){ prenom = res.data.prenom; }
       role = res.data.role || null;
+      reponses = res.data.reponses || {};
     } else {
       await sb.from('progression').upsert(
         { user_id: user.id, prenom: prenom, jours_faits: [] },
@@ -570,6 +622,7 @@
       );
     }
     applyProgress(jours);
+    fillAnswers(reponses);
     setGreeting(prenom);
     applyRole(role);
     if(!role){ showRolePicker(); }
