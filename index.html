@@ -506,6 +506,19 @@
     if(res.error){ console.error("Sauvegarde impossible :", res.error.message); }
   }
 
+  async function addToBrevo(prenom){
+    try {
+      var s = await sb.auth.getSession();
+      var token = (s.data && s.data.session) ? s.data.session.access_token : null;
+      if(!token){ return; }
+      await fetch("https://bqklygwhqkhdegdbilfm.supabase.co/functions/v1/newsletter-signup", {
+        method: "POST",
+        headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+        body: JSON.stringify({ prenom: prenom || "" })
+      });
+    } catch(e){ console.error("Inscription newsletter :", e); }
+  }
+
   function fillAnswers(obj){
     answers = obj || {};
     document.querySelectorAll("[data-answer-day]").forEach(function(ta){
@@ -628,12 +641,14 @@
           { user_id: user.id, newsletter: true, updated_at: new Date().toISOString() },
           { onConflict: 'user_id' }
         );
+        addToBrevo(prenom);
       }
     } else {
       await sb.from('progression').upsert(
         { user_id: user.id, prenom: prenom, jours_faits: [], newsletter: wantsNews },
         { onConflict: 'user_id' }
       );
+      if(wantsNews){ addToBrevo(prenom); }
     }
     applyProgress(jours);
     fillAnswers(reponses);
