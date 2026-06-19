@@ -184,6 +184,7 @@
   .auth-skip{display:inline-block;margin-top:18px;font-family:"Montserrat",sans-serif;font-size:13px;color:var(--cream-dim);text-decoration:underline;cursor:pointer;}
   .news-opt{display:flex;align-items:flex-start;gap:9px;text-align:left;margin:4px 0 18px;font-family:"Montserrat",sans-serif;font-size:13px;color:var(--cream-dim);line-height:1.45;cursor:pointer;}
   .news-opt input{margin-top:2px;width:16px;height:16px;flex-shrink:0;accent-color:var(--gold);cursor:pointer;}
+  .news-opt a{color:var(--gold-soft);text-decoration:underline;}
   .auth-skip:hover{color:var(--gold-soft);}
   .google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#fff;color:#23252B;font-family:"Montserrat",sans-serif;font-weight:600;font-size:15px;border:none;border-radius:30px;padding:13px 18px;cursor:pointer;transition:opacity .2s ease;}
   .google-btn:hover{opacity:0.9;}
@@ -210,6 +211,7 @@
     <span class="label">Votre livret</span>
     <h2>Gardez votre progression</h2>
     <p class="auth-sub">Connectez-vous pour garder votre avancée dans les 21 jours d'une fois à l'autre.</p>
+    <label class="news-opt"><input type="checkbox" id="acceptOptin"> <span>J'ai lu et j'accepte les <a href="https://acekom.fr/conditions-generales-utilisation/" target="_blank" rel="noopener">Conditions Générales d'Utilisation</a> et la <a href="https://acekom.fr/politique-de-confidentialite/" target="_blank" rel="noopener">Politique de confidentialité</a>.</span></label>
     <label class="news-opt"><input type="checkbox" id="newsOptin"> <span>Je souhaite aussi recevoir la newsletter et les actualités de Jean-Philippe Ackermann (facultatif).</span></label>
     <button class="google-btn" id="googleBtn">
       <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -471,6 +473,7 @@
   var heroGreet   = document.getElementById("heroGreet");
   var googleBtn   = document.getElementById("googleBtn");
   var newsCheckbox = document.getElementById("newsOptin");
+  var acceptCheckbox = document.getElementById("acceptOptin");
   var roleOverlay = document.getElementById("roleOverlay");
   var roleLine    = document.getElementById("roleLine");
   var roleSkip    = document.getElementById("roleSkip");
@@ -660,6 +663,7 @@
   }
 
   sendLinkBtn.onclick = async function(){
+    if(!acceptCheckbox.checked){ authMsg.textContent = "Veuillez accepter les conditions pour continuer."; return; }
     var email = emailInput.value.trim();
     var prenom = prenomInput.value.trim();
     if(!email){ authMsg.textContent = "Indiquez votre email."; return; }
@@ -682,6 +686,7 @@
   skipAuth.onclick = function(){ hideOverlay(); };
 
   googleBtn.onclick = async function(){
+    if(!acceptCheckbox.checked){ authMsg.textContent = "Veuillez accepter les conditions pour continuer."; return; }
     localStorage.setItem('jpa_newsletter', newsCheckbox.checked ? '1' : '0');
     authMsg.textContent = "Redirection vers Google...";
     var res = await sb.auth.signInWithOAuth({
