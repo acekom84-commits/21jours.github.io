@@ -134,6 +134,15 @@
   .closing h2{font-size:clamp(26px,6vw,40px);color:#fff;margin:6px 0 18px;font-weight:700;}
   .closing p{color:var(--cream-dim);max-width:540px;margin:0 auto 16px;}
   .closing .pledge{font-family:"Lora";font-style:italic;font-size:20px;color:var(--gold-soft);max-width:560px;margin:24px auto 0;}
+  /* NEWSLETTER INLINE (page principale) */
+  .news-inline{padding:0 20px 60px;text-align:center;}
+  .news-inline .box{max-width:520px;margin:0 auto;background:linear-gradient(180deg,var(--navy-card),var(--navy));border:1px solid rgba(224,177,58,0.35);border-radius:16px;padding:26px 24px;box-shadow:0 16px 40px rgba(0,0,0,0.35);}
+  .news-inline h3{color:#fff;font-size:21px;margin:0 0 8px;font-weight:700;}
+  .news-inline p{color:var(--cream-dim);font-size:15px;line-height:1.5;margin:0 auto 16px;max-width:430px;}
+  .news-inline label{display:flex;align-items:flex-start;gap:10px;text-align:left;max-width:340px;margin:0 auto;color:var(--cream);font-size:15px;cursor:pointer;}
+  .news-inline label input{margin-top:2px;width:18px;height:18px;flex-shrink:0;accent-color:var(--gold);cursor:pointer;}
+  .news-inline .news-inline-msg{font-size:13px;color:var(--gold-soft);margin:14px 0 0;min-height:1px;}
+  .news-inline .done{color:var(--gold-soft);font-weight:600;font-size:17px;margin:0;}
   .more{margin-top:34px;display:flex;flex-direction:column;align-items:center;gap:12px;}
   .btn-book{background:transparent;color:var(--gold-soft);border:1px solid var(--gold);}
   .btn-book:hover{background:rgba(224,177,58,0.12);color:#fff;}
@@ -303,6 +312,17 @@
   </div>
 </section>
 
+<section class="news-inline" id="newsInline" style="display:none">
+  <div class="wrap">
+    <div class="box" id="newsInlineBox">
+      <h3>Restons en contact</h3>
+      <p>Envie de recevoir la newsletter et les actualités de Jean-Philippe Ackermann ? Cochez la case ci-dessous — désinscription possible à tout moment.</p>
+      <label><input type="checkbox" id="newsInlineCheck"> <span>Oui, je souhaite recevoir la newsletter.</span></label>
+      <p class="news-inline-msg" id="newsInlineMsg"></p>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="wrap">
     <div class="name">Jean-Philippe Ackermann</div>
@@ -391,6 +411,7 @@
   var dayMap = {};
   weeks.forEach(function(w){ w.days.forEach(function(d){ dayMap[d.n] = d; }); });
   var currentRole = null;
+  var currentPrenom = "";
   var answers = {};
   var lastEditedDay = null;
   var answerSaveTimer = null;
@@ -477,6 +498,10 @@
   var roleOverlay = document.getElementById("roleOverlay");
   var roleLine    = document.getElementById("roleLine");
   var roleSkip    = document.getElementById("roleSkip");
+  var newsInline      = document.getElementById("newsInline");
+  var newsInlineBox   = document.getElementById("newsInlineBox");
+  var newsInlineCheck = document.getElementById("newsInlineCheck");
+  var newsInlineMsg   = document.getElementById("newsInlineMsg");
 
   authPill.onclick = showOverlay; // comportement par défaut (déconnecté)
 
@@ -520,6 +545,36 @@
         body: JSON.stringify({ prenom: prenom || "" })
       });
     } catch(e){ console.error("Inscription newsletter :", e); }
+  }
+
+  function updateNewsInline(isSubscribed){
+    if(!newsInline){ return; }
+    newsInline.style.display = isSubscribed ? "none" : "block";
+  }
+
+  async function subscribeInline(){
+    if(!currentUser){ return; }
+    newsInlineCheck.disabled = true;
+    if(newsInlineMsg){ newsInlineMsg.textContent = "Inscription en cours..."; }
+    var ok = false;
+    try {
+      var up = await sb.from('progression').upsert(
+        { user_id: currentUser.id, newsletter: true, updated_at: new Date().toISOString() },
+        { onConflict: 'user_id' }
+      );
+      if(!up.error){ addToBrevo(currentPrenom); ok = true; }
+    } catch(e){ console.error("Inscription newsletter (inline) :", e); }
+    if(ok){
+      newsInlineBox.innerHTML = '<p class="done">Merci, vous êtes bien inscrit à la newsletter ✓</p>';
+    } else {
+      newsInlineCheck.checked = false;
+      newsInlineCheck.disabled = false;
+      if(newsInlineMsg){ newsInlineMsg.textContent = "Oups, un souci est survenu. Réessayez dans un instant."; }
+    }
+  }
+
+  if(newsInlineCheck){
+    newsInlineCheck.onchange = function(){ if(newsInlineCheck.checked){ subscribeInline(); } };
   }
 
   function fillAnswers(obj){
@@ -634,31 +689,35 @@
     var jours = [];
     var role = null;
     var reponses = {};
+    var isSubscribed = false;
     if(res.data){
       jours = res.data.jours_faits || [];
       if(res.data.prenom){ prenom = res.data.prenom; }
       role = res.data.role || null;
       reponses = res.data.reponses || {};
-      if(wantsNews){
-        if(!res.data.newsletter){
-          await sb.from('progression').upsert(
-            { user_id: user.id, newsletter: true, updated_at: new Date().toISOString() },
-            { onConflict: 'user_id' }
-          );
-        }
+      isSubscribed = res.data.newsletter === true;
+      if(wantsNews && !isSubscribed){
+        await sb.from('progression').upsert(
+          { user_id: user.id, newsletter: true, updated_at: new Date().toISOString() },
+          { onConflict: 'user_id' }
+        );
         addToBrevo(prenom);
+        isSubscribed = true;
       }
     } else {
+      isSubscribed = wantsNews === true;
       await sb.from('progression').upsert(
         { user_id: user.id, prenom: prenom, jours_faits: [], newsletter: wantsNews },
         { onConflict: 'user_id' }
       );
       if(wantsNews){ addToBrevo(prenom); }
     }
+    currentPrenom = prenom;
     applyProgress(jours);
     fillAnswers(reponses);
     setGreeting(prenom);
     applyRole(role);
+    updateNewsInline(isSubscribed);
     if(!role){ showRolePicker(); }
   }
 
