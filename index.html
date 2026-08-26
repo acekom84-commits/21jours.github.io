@@ -336,6 +336,7 @@
   var SUPABASE_URL      = "https://bqklygwhqkhdegdbilfm.supabase.co";
   var SUPABASE_ANON_KEY = "sb_publishable_fp923KC3bm68CXheH21X1A_6xS1SfPK";
   var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  var CLEAN_URL = window.location.origin + window.location.pathname;
   var currentUser = null;
   var nudged = false;
   /* ===================================================== */
@@ -627,7 +628,7 @@
       heroGreet.style.display = "block";
     }
     authPill.textContent = prenom ? ("Bonjour " + prenom + " · Déconnexion") : "Déconnexion";
-    authPill.onclick = async function(){ await sb.auth.signOut(); location.reload(); };
+    authPill.onclick = async function(){ await sb.auth.signOut(); window.location.replace(CLEAN_URL); };
   }
 
   /* ====== RÔLES : application, affichage, sauvegarde ====== */
@@ -749,7 +750,7 @@
     authMsg.textContent = "Redirection vers Google...";
     var res = await sb.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.href }
+      options: { redirectTo: CLEAN_URL }
     });
     if(res.error){ authMsg.textContent = "Erreur Google : " + res.error.message; }
   };
