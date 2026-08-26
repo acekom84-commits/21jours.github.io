@@ -183,11 +183,6 @@
   .auth-card .label{display:block;margin-bottom:8px;}
   .auth-card h2{font-family:"Montserrat",sans-serif;color:#fff;font-size:26px;font-weight:700;margin:8px 0 12px;line-height:1.15;}
   .auth-sub{color:var(--cream-dim);font-size:15px;line-height:1.6;margin:0 0 22px;}
-  .auth-card input{width:100%;font-family:"Lora",serif;font-size:16px;padding:13px 15px;margin:0 0 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.06);color:#fff;}
-  .auth-card input::placeholder{color:rgba(245,243,238,0.55);}
-  .auth-card input:focus{outline:none;border-color:var(--gold-soft);}
-  .auth-btn{width:100%;border:none;cursor:pointer;margin-top:4px;}
-  .auth-btn:disabled{opacity:0.6;cursor:default;}
   .auth-msg{font-size:14px;color:var(--gold-soft);min-height:18px;margin:14px 0 0;}
   .auth-rgpd{font-size:12px;color:rgba(245,243,238,0.5);line-height:1.5;margin:14px 0 0;}
   .auth-skip{display:inline-block;margin-top:18px;font-family:"Montserrat",sans-serif;font-size:13px;color:var(--cream-dim);text-decoration:underline;cursor:pointer;}
@@ -197,9 +192,6 @@
   .auth-skip:hover{color:var(--gold-soft);}
   .google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#fff;color:#23252B;font-family:"Montserrat",sans-serif;font-weight:600;font-size:15px;border:none;border-radius:30px;padding:13px 18px;cursor:pointer;transition:opacity .2s ease;}
   .google-btn:hover{opacity:0.9;}
-  .auth-or{display:flex;align-items:center;text-align:center;color:rgba(245,243,238,0.5);font-size:12px;font-family:"Montserrat",sans-serif;text-transform:uppercase;letter-spacing:0.1em;margin:16px 0;}
-  .auth-or::before,.auth-or::after{content:"";flex:1;height:1px;background:rgba(255,255,255,0.15);}
-  .auth-or span{padding:0 12px;}
   .role-options{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
   .role-opt{width:100%;background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.18);border-radius:10px;padding:13px 15px;font-family:"Montserrat",sans-serif;font-size:15px;cursor:pointer;transition:border-color .15s ease,background .15s ease;}
   .role-opt:hover{border-color:var(--gold-soft);background:rgba(224,177,58,0.12);}
@@ -231,12 +223,8 @@
       </svg>
       Continuer avec Google
     </button>
-    <div class="auth-or"><span>ou par email</span></div>
-    <input id="prenomInput" type="text" placeholder="Votre prénom" autocomplete="given-name">
-    <input id="emailInput" type="email" placeholder="Votre email" autocomplete="email">
-    <button class="btn auth-btn" id="sendLinkBtn">Recevoir mon lien</button>
     <p class="auth-msg" id="authMsg"></p>
-    <p class="auth-rgpd">Votre email sert à sauvegarder votre progression dans ce livret. La newsletter n'est envoyée que si vous cochez la case ci-dessus, et vous pouvez vous désinscrire à tout moment.</p>
+    <p class="auth-rgpd">Votre connexion Google sert uniquement à sauvegarder votre progression dans ce livret. La newsletter n'est envoyée que si vous cochez la case ci-dessus, et vous pouvez vous désinscrire à tout moment.</p>
     <a class="auth-skip" id="skipAuth">Parcourir le livret sans me connecter</a>
   </div>
 </div>
@@ -487,9 +475,6 @@
   /* ============ AUTH MAGIC LINK + SAUVEGARDE ============ */
   var authOverlay = document.getElementById("authOverlay");
   var authPill    = document.getElementById("authPill");
-  var prenomInput = document.getElementById("prenomInput");
-  var emailInput  = document.getElementById("emailInput");
-  var sendLinkBtn = document.getElementById("sendLinkBtn");
   var authMsg     = document.getElementById("authMsg");
   var skipAuth    = document.getElementById("skipAuth");
   var heroGreet   = document.getElementById("heroGreet");
@@ -755,27 +740,6 @@
     if(migrated){ persistParcours(); }
     if(!role){ showRolePicker(); }
   }
-
-  sendLinkBtn.onclick = async function(){
-    if(!acceptCheckbox.checked){ authMsg.textContent = "Veuillez accepter les conditions pour continuer."; return; }
-    var email = emailInput.value.trim();
-    var prenom = prenomInput.value.trim();
-    if(!email){ authMsg.textContent = "Indiquez votre email."; return; }
-    localStorage.setItem('jpa_prenom', prenom);
-    localStorage.setItem('jpa_newsletter', newsCheckbox.checked ? '1' : '0');
-    sendLinkBtn.disabled = true;
-    authMsg.textContent = "Envoi du lien...";
-    var res = await sb.auth.signInWithOtp({
-      email: email,
-      options: { data: { prenom: prenom }, emailRedirectTo: window.location.href }
-    });
-    if(res.error){
-      authMsg.textContent = "Erreur : " + res.error.message;
-      sendLinkBtn.disabled = false;
-    } else {
-      authMsg.textContent = "C'est envoyé ! Ouvrez votre boîte mail et cliquez sur le lien.";
-    }
-  };
 
   skipAuth.onclick = function(){ hideOverlay(); };
 
