@@ -99,6 +99,7 @@
   .progress .count b{color:var(--gold-soft);font-size:18px;}
   .track{flex:1;height:7px;border-radius:6px;background:rgba(255,255,255,0.14);overflow:hidden;}
   .fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-soft));border-radius:6px;transition:width .45s ease;}
+  .progress-title{font-family:"Montserrat";font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;color:var(--gold);margin:0 0 8px;}
 
   /* WEEK */
   .week{padding:52px 0 8px;}
@@ -335,9 +336,12 @@
 </section>
 
 <div class="progress">
-  <div class="wrap row">
-    <span class="count"><b id="doneCount">0</b> / 21 jours</span>
-    <div class="track"><div class="fill" id="fill"></div></div>
+  <div class="wrap">
+    <p class="progress-title">Ma progression</p>
+    <div class="row">
+      <span class="count"><b id="doneCount">0</b> / 21 jours</span>
+      <div class="track"><div class="fill" id="fill"></div></div>
+    </div>
   </div>
 </div>
 
