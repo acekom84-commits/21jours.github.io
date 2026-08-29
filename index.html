@@ -186,6 +186,13 @@
   @keyframes fall{0%{opacity:1;transform:translateY(0) rotate(0)}100%{opacity:0;transform:translateY(105vh) rotate(540deg)}}
   @media (prefers-reduced-motion:reduce){.celebrate-card{animation:none;}.confetti{display:none;}}
 
+  /* ====== SLIDE EN POP-UP ====== */
+  .slide-btn{display:inline-flex;align-items:center;gap:6px;margin-top:2px;background:none;border:1px solid var(--gold-soft);color:#A77F12;font-family:"Montserrat",sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;padding:7px 13px;border-radius:999px;cursor:pointer;}
+  .slide-btn:hover{background:rgba(224,177,58,0.14);}
+  .slide-modal{position:fixed;inset:0;z-index:180;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(20,33,55,0.94);backdrop-filter:blur(6px);}
+  .slide-modal.show{display:flex;}
+  .slide-modal img{max-width:100%;max-height:86vh;border-radius:10px;box-shadow:0 18px 50px rgba(0,0,0,0.45);}
+  .slide-close{position:absolute;top:12px;right:14px;background:none;border:none;color:#fff;font-size:32px;line-height:1;cursor:pointer;padding:6px 10px;}
   a:focus-visible,.day-head:focus-visible,.daycheck input:focus-visible,.btn:focus-visible{outline:3px solid var(--gold-soft);outline-offset:3px;border-radius:4px;}
 
   @media (max-width:560px){
@@ -395,7 +402,11 @@
     <button class="btn" id="celebrateClose">Continuer</button>
   </div>
 </div>
-
+<div class="slide-modal" id="slideModal" role="dialog" aria-label="Image du jour">
+  <button class="slide-close" id="slideClose" aria-label="Fermer">&times;</button>
+  <img id="slideImg" src="" alt="Image du jour">
+</div>
+  
 <footer>
   <div class="wrap">
     <div class="name">Jean-Philippe Ackermann</div>
@@ -432,7 +443,7 @@
       title:"Décider",
       intro:"L’optimisme est un choix. Cette semaine, vous allez apprendre à observer vos pensées, questionner votre regard et choisir la façon dont vous voulez lire le réel.",
       days:[
-        {n:1,t:"La décision",idea:"L’optimisme ne tombe pas du ciel et ne dépend pas des circonstances. L’optimisme est un choix. Un choix que l’on fait et que l’on renouvelle chaque jour.",action:"Sur quoi voulez-vous être plus optimiste ? Choisissez une situation, un projet ou un aspect de votre vie sur lequel vous souhaitez changer de regard pendant ces 21 jours.",actions:{cultiver:"Sur quoi voulez-vous être plus optimiste ? Choisissez une situation, un projet ou un aspect de votre vie sur lequel vous souhaitez changer de regard pendant ces 21 jours.",diriger:"Sur quel enjeu souhaitez-vous diriger avec plus d’optimisme ? Choisissez une situation ou une décision sur laquelle vous voulez gagner en clarté et en confiance pendant ces 21 jours.",donner:"Qui ou quoi aimeriez-vous davantage mettre en mouvement ? Choisissez une personne, une équipe ou un projet sur lequel vous souhaitez apporter davantage d’énergie et de motivation pendant ces 21 jours.",equipe:"Qu’aimeriez-vous faire évoluer dans votre équipe ? Choisissez un objectif concret de cohésion, de confiance ou de dynamique collective pour ces 21 jours.",vendre:"Sur quel objectif commercial voulez-vous porter un regard plus optimiste ? Choisissez un objectif, une situation ou un défi commercial sur lequel vous souhaitez progresser pendant ces 21 jours."}},
+        {n:1,t:"La décision",idea:"L’optimisme ne tombe pas du ciel et ne dépend pas des circonstances. L’optimisme est un choix. Un choix que l’on fait et que l’on renouvelle chaque jour.",action:"Sur quoi voulez-vous être plus optimiste ? Choisissez une situation, un projet ou un aspect de votre vie sur lequel vous souhaitez changer de regard pendant ces 21 jours.",actions:{cultiver:"Sur quoi voulez-vous être plus optimiste ? Choisissez une situation, un projet ou un aspect de votre vie sur lequel vous souhaitez changer de regard pendant ces 21 jours.",diriger:"Sur quel enjeu souhaitez-vous diriger avec plus d’optimisme ? Choisissez une situation ou une décision sur laquelle vous voulez gagner en clarté et en confiance pendant ces 21 jours.",donner:"Qui ou quoi aimeriez-vous davantage mettre en mouvement ? Choisissez une personne, une équipe ou un projet sur lequel vous souhaitez apporter davantage d’énergie et de motivation pendant ces 21 jours.",equipe:"Qu’aimeriez-vous faire évoluer dans votre équipe ? Choisissez un objectif concret de cohésion, de confiance ou de dynamique collective pour ces 21 jours.",vendre:"Sur quel objectif commercial voulez-vous porter un regard plus optimiste ? Choisissez un objectif, une situation ou un défi commercial sur lequel vous souhaitez progresser pendant ces 21 jours."},slide:"slides/baden-powell.jpg"},
         {n:2,t:"L’événement et l’idée",idea:"Entre ce qui vous arrive et la façon dont vous le vivez, il y a l’interprétation que vous en faites. C’est là que se trouve votre marge de liberté.",action:"Pensez à un événement récent qui vous a contrarié. Écrivez d’abord uniquement les faits, puis ce que vous vous êtes dit à propos de cette situation.",actions:{cultiver:"Pensez à un événement récent qui vous a contrarié. Écrivez d’abord uniquement les faits, puis ce que vous vous êtes dit à propos de cette situation.",diriger:"Pensez à une situation professionnelle récente qui vous a mis en difficulté ou fait douter. Distinguez les faits de l’interprétation que vous en avez faite.",donner:"Pensez à une situation récente où une personne ou une équipe n’a pas réagi comme vous l’espériez. Qu’avez-vous réellement observé ? Et qu’en avez-vous conclu ?",equipe:"Pensez à une tension, un désaccord ou un comportement récent dans votre équipe. Séparez ce qui s’est réellement passé de ce que vous avez supposé ou interprété.",vendre:"Pensez à un refus, une objection ou un silence récent d’un prospect ou d’un client. Notez le fait, puis ce que vous vous êtes raconté à partir de ce fait."}},
         {n:3,t:"L’autre face",idea:"Une difficulté n’a pas forcément qu’une face. Elle peut aussi contenir un apprentissage, une opportunité ou révéler une force. Entraîner son optimisme, c’est apprendre à les chercher.",action:"Pensez à une difficulté récente. Quelle pourrait être son autre face ? Un apprentissage, une opportunité, une prise de conscience ou une force qu’elle révèle.",actions:{cultiver:"Pensez à une difficulté récente. Quelle pourrait être son autre face ? Un apprentissage, une opportunité, une prise de conscience ou une force qu’elle révèle.",diriger:"Pensez à une difficulté que vous rencontrez actuellement comme dirigeant. Que peut-elle vous apprendre ou vous amener à faire évoluer ?",donner:"Pensez à une situation où vous avez du mal à mobiliser une personne ou une équipe. Que peut-elle vous apprendre sur ce qui pourrait mieux la motiver ?",equipe:"Pensez à une difficulté que rencontre votre équipe. Que révèle-t-elle sur ce dont elle a besoin pour mieux fonctionner ensemble ?",vendre:"Repensez à un refus, une objection ou une difficulté commerciale récente. Quel enseignement ou quelle opportunité pouvez-vous en tirer ?"}},
         {n:4,t:"La représentation du réel",idea:"Un même événement peut être vécu très différemment selon la représentation que nous nous en faisons. Les faits sont les mêmes, mais notre façon de les regarder influence notre manière de les vivre.",action:"Pensez à un événement récent que vous avez vécu négativement. Imaginez qu’une autre personne vive exactement le même événement : comment pourrait-elle le percevoir différemment ?",actions:{cultiver:"Pensez à un événement récent que vous avez vécu négativement. Imaginez qu’une autre personne vive exactement le même événement : comment pourrait-elle le percevoir différemment ?",diriger:"Pensez à une situation professionnelle qui vous préoccupe. Comment un autre dirigeant pourrait-il regarder exactement la même situation différemment ?",donner:"Pensez à une personne que vous trouvez difficile à motiver. Comment quelqu’un d’autre pourrait-il interpréter différemment son attitude ou son comportement ?",equipe:"Pensez à une situation difficile dans votre équipe. Comment un autre membre de l’équipe pourrait-il percevoir cette même situation différemment de vous ?",vendre:"Pensez à une situation commerciale que vous avez vécue négativement. Comment un autre commercial pourrait-il interpréter exactement la même situation différemment ?"}},
@@ -514,6 +525,7 @@
       html += '<div class="field action"><p class="ft">Votre pas d\'aujourd\'hui</p><p class="action-text" data-action-day="'+d.n+'">'+d.action+'</p></div>';
       html += '<div class="field reponse"><p class="ft">Votre réponse</p><textarea class="answer-box" data-answer-day="'+d.n+'" rows="3" placeholder="Écrivez ici votre réponse… (enregistrée automatiquement)"></textarea><span class="save-hint" data-hint-day="'+d.n+'"></span></div>';
       if(d.quote){ html += '<p class="quote">'+d.quote+'</p>'; }
+      if(d.slide){ html += '<button type="button" class="slide-btn" data-slide="'+d.slide+'">L\'image du jour</button>'; }
       html += '<label class="daycheck"><input type="checkbox" data-check="'+d.n+'"><span>Marquer ce jour comme accompli</span></label>';
       html += '</div></div>';
       html += '</article>';
@@ -604,6 +616,24 @@ if(howtoBox){
     celebrateClose.onclick = function(){ celebrateEl.classList.remove("show"); };
   }
 
+  /* ====== SLIDE EN POP-UP ====== */
+  var slideModal = document.getElementById("slideModal");
+  var slideImg   = document.getElementById("slideImg");
+  var slideClose = document.getElementById("slideClose");
+
+  document.addEventListener("click", function(e){
+    var b = e.target.closest ? e.target.closest(".slide-btn") : null;
+    if(b){
+      slideImg.src = b.getAttribute("data-slide");
+      slideModal.classList.add("show");
+    }
+  });
+
+  function hideSlide(){ slideModal.classList.remove("show"); slideImg.src = ""; }
+  if(slideClose){ slideClose.onclick = hideSlide; }
+  slideModal.addEventListener("click", function(e){ if(e.target === slideModal){ hideSlide(); } });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape"){ hideSlide(); } });
+  
   /* ============ AUTH MAGIC LINK + SAUVEGARDE ============ */
   var authOverlay = document.getElementById("authOverlay");
   var authPill    = document.getElementById("authPill");
