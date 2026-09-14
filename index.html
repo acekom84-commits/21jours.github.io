@@ -129,6 +129,9 @@
   .day-head{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;user-select:none;}
   .step-num{flex:none;width:40px;height:40px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;border:2px solid var(--orange);z-index:1;}
   .day.done .step-num{background:var(--valid);border-color:var(--valid);}
+  .step-num .sn-tick{display:none;font-size:19px;line-height:1;}
+  .day.done .step-num .sn-num{display:none;}
+  .day.done .step-num .sn-tick{display:block;}
   .day-title{flex:1;}
   .day-title .small{display:block;font-family:"Montserrat";text-transform:uppercase;letter-spacing:0.12em;font-size:11px;color:var(--ink-soft);font-weight:600;}
   .day-title .big{display:block;font-family:"Montserrat";font-weight:600;font-size:17px;color:var(--ink);line-height:1.25;}
@@ -537,7 +540,7 @@
     week.days.forEach(function(d){
       html += '<article class="day" data-day="'+d.n+'">';
       html += '<div class="day-head" role="button" tabindex="0" aria-expanded="false">';
-      html += '<span class="step-num">'+d.n+'</span>';
+     html += '<span class="step-num"><span class="sn-num">'+d.n+'</span><span class="sn-tick">✓</span></span>';
       html += '<span class="day-title"><span class="small">Jour '+d.n+'</span><span class="big">'+d.t+'</span></span>';
       html += '<span class="chev" aria-hidden="true">&#9660;</span>';
       html += '</div>';
