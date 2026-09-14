@@ -149,7 +149,9 @@
   .daycheck{display:flex;align-items:center;gap:10px;margin-top:6px;}
   .daycheck input{width:20px;height:20px;accent-color:var(--valid);cursor:pointer;}
   .daycheck span{font-size:11px;font-weight:600;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.06em;}
-  .day.done .daycheck span{color:var(--valid);}
+  .daycheck .dc-done{display:none;}
+  .day.done .daycheck .dc-todo{display:none;}
+  .day.done .daycheck .dc-done{display:inline;color:var(--valid);}
 
   /* CLOSING — blanc chaud */
   .closing{padding:30px 0 50px;text-align:center;}
@@ -545,7 +547,7 @@
       if(d.slide){ html += '<button type="button" class="slide-btn" data-slide="'+d.slide+'">L\'image du jour</button>'; }
       html += '<div class="field reponse"><p class="ft">Votre réponse</p><textarea class="answer-box" data-answer-day="'+d.n+'" rows="3" placeholder="Écrivez ou dictez votre réponse avec le micro de votre clavier… (enregistrée automatiquement)"></textarea><span class="save-hint" data-hint-day="'+d.n+'"></span></div>';
       if(d.quote){ html += '<p class="quote">'+d.quote+'</p>'; }
-      html += '<label class="daycheck"><input type="checkbox" data-check="'+d.n+'"><span>Marquer ce jour comme accompli</span></label>';
+      html += '<label class="daycheck"><input type="checkbox" data-check="'+d.n+'"><span class="dc-todo">Marquer ce jour comme accompli</span><span class="dc-done">Jour accompli</span></label>';
       html += '</div></div>';
       html += '</article>';
     });
