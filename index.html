@@ -199,7 +199,7 @@
   @media (prefers-reduced-motion:reduce){.celebrate-card{animation:none;}.confetti{display:none;}}
 
   /* ====== SLIDE EN POP-UP ====== */
-  .slide-btn{display:inline-flex;align-items:center;gap:6px;margin-top:-15px;background:var(--orange);border:none;color:#fff;font-family:"Montserrat",sans-serif;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;padding:9px 16px;border-radius:999px;cursor:pointer;box-shadow:0 4px 12px rgba(217,96,31,0.30);transition:background .2s ease;}
+  .slide-btn{display:inline-flex;align-items:center;gap:6px;margin:0 0 14px;background:var(--orange);border:none;color:#fff;font-family:"Montserrat",sans-serif;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;padding:9px 16px;border-radius:999px;cursor:pointer;box-shadow:0 4px 12px rgba(217,96,31,0.30);transition:background .2s ease;}
   .slide-btn:hover{background:#C2551D;}
   .slide-modal{position:fixed;inset:0;z-index:180;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(9,66,68,0.94);backdrop-filter:blur(6px);}
   .slide-modal.show{display:flex;}
@@ -536,9 +536,9 @@
       html += '<div class="day-body"><div class="day-body-inner">';
       html += '<div class="field"><p>'+d.idea+'</p></div>';
       html += '<div class="field action"><p class="ft">Votre pas d\'aujourd\'hui</p><p class="action-text" data-action-day="'+d.n+'">'+d.action+'</p></div>';
+      if(d.slide){ html += '<button type="button" class="slide-btn" data-slide="'+d.slide+'">L\'image du jour</button>'; }
       html += '<div class="field reponse"><p class="ft">Votre réponse</p><textarea class="answer-box" data-answer-day="'+d.n+'" rows="3" placeholder="Écrivez ici votre réponse… (enregistrée automatiquement)"></textarea><span class="save-hint" data-hint-day="'+d.n+'"></span></div>';
       if(d.quote){ html += '<p class="quote">'+d.quote+'</p>'; }
-      if(d.slide){ html += '<button type="button" class="slide-btn" data-slide="'+d.slide+'">L\'image du jour</button>'; }
       html += '<label class="daycheck"><input type="checkbox" data-check="'+d.n+'"><span>Marquer ce jour comme accompli</span></label>';
       html += '</div></div>';
       html += '</article>';
