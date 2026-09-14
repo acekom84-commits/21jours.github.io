@@ -267,8 +267,7 @@
   .role-change:hover{transform:translateY(-1px);box-shadow:0 7px 20px rgba(217,96,31,0.5);}
   .answer-box{width:100%;box-sizing:border-box;font-family:"Lora",serif;font-size:15px;line-height:1.55;padding:11px 13px;margin-top:2px;border:1px solid var(--teal-line);border-radius:10px;background:#fff;color:var(--ink);resize:vertical;min-height:74px;}
   .answer-box:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 2px rgba(217,96,31,0.18);}
-  .save-hint{display:block;height:14px;margin-top:5px;font-family:"Montserrat",sans-serif;font-size:12px;color:#1E8A6E;opacity:0;transition:opacity .2s ease;}
-  .save-hint.show{opacity:1;}
+  .save-hint{display:none;}
 </style>
 </head>
 <body>
@@ -544,7 +543,7 @@
       html += '<div class="field"><p>'+d.idea+'</p></div>';
       html += '<div class="field action"><p class="ft">Votre pas d\'aujourd\'hui</p><p class="action-text" data-action-day="'+d.n+'">'+d.action+'</p></div>';
       if(d.slide){ html += '<button type="button" class="slide-btn" data-slide="'+d.slide+'">L\'image du jour</button>'; }
-      html += '<div class="field reponse"><p class="ft">Votre réponse</p><textarea class="answer-box" data-answer-day="'+d.n+'" rows="3" placeholder="Écrivez ici votre réponse… (enregistrée automatiquement)"></textarea><span class="save-hint" data-hint-day="'+d.n+'"></span></div>';
+      html += '<div class="field reponse"><p class="ft">Votre réponse</p><textarea class="answer-box" data-answer-day="'+d.n+'" rows="3" placeholder="Écrivez ou dictez votre réponse avec le micro de votre clavier… (enregistrée automatiquement)"></textarea><span class="save-hint" data-hint-day="'+d.n+'"></span></div>';
       if(d.quote){ html += '<p class="quote">'+d.quote+'</p>'; }
       html += '<label class="daycheck"><input type="checkbox" data-check="'+d.n+'"><span>Marquer ce jour comme accompli</span></label>';
       html += '</div></div>';
